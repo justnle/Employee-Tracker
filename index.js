@@ -26,6 +26,7 @@ const promptMessagesBonus = {
   viewManagers: 'View All Managers'
 };
 
+// ALL HAVE TO DYNAMICALLY UPDATE or PULL FROM THE DB
 const roleChoices = [
   'Sales Lead',
   'Salesperson',
@@ -36,7 +37,6 @@ const roleChoices = [
   'Lawyer'
 ];
 
-// HAS TO DYNAMICALLY UPDATE or PULL FROM THE DB
 const employeeChoices = [
   'John Doe',
   'Mike Chan',
@@ -48,6 +48,8 @@ const employeeChoices = [
   'Christian Eckenrode',
   'None'
 ];
+
+const departmentChoices = ['Sales', 'Engineering', 'Finance', 'Legal'];
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -138,6 +140,7 @@ function viewEmployees() {
   });
 }
 
+// TODO: DRY OUT, view() are all similar, just SELECT from different tables
 function viewDepartments() {
   const query = 'SELECT name FROM department';
   connection.query(query, (err, res) => {
@@ -279,9 +282,66 @@ function addDepartment() {
     });
 }
 
-// function addRole() {
+function addRole() {
+  inquirer
+    .prompt([
+      {
+        name: 'roleName',
+        type: 'input',
+        message: 'What is the name of the role?'
+      },
+      {
+        name: 'salary',
+        type: 'input',
+        message: 'What is the salary for this role?',
+        validate: answer => {
+          const check = answer.match(/^[1-9][0-9]*([.][0-9]{2}|)$/);
+          if (check) {
+            return true;
+          } else {
+            return 'Please enter a valid salary.';
+          }
+        }
+      },
+      {
+        name: 'roleDepartment',
+        type: 'list',
+        message: 'What department is this role in?',
+        choices: departmentChoices
+      }
+    ])
+    .then(answer => {
+      switch (answer.roleDepartment) {
+        case 'Sales':
+          answer.roleDepartment = 1;
+          break;
+        case 'Engineering':
+          answer.roleDepartment = 2;
+          break;
+        case 'Finance':
+          answer.roleDepartment = 3;
+          break;
+        case 'Legal':
+          answer.roleDepartment = 4;
+          break;
+        default:
+          answer.roleDepartment = null;
+      }
 
-// }
+      const query = connection.query(
+        'INSERT INTO role SET ?',
+        {
+          title: answer.roleName,
+          salary: answer.salary,
+          department_id: answer.roleDepartment
+        },
+        (err, res) => {
+          if (err) throw err;
+          prompt();
+        }
+      );
+    });
+}
 
 // function updateEmployeeRole() {
 
