@@ -26,35 +26,8 @@ const promptMessagesBonus = {
   viewManagers: 'View All Managers'
 };
 
-// const roleChoices = [
-//   'Sales Lead',
-//   'Salesperson',
-//   'Lead Engineer',
-//   'Software Engineer',
-//   'Accountant',
-//   'Legal Team Lead',
-//   'Lawyer'
-// ];
-
 const roleChoices = [];
-
-// const employeeChoices = [
-//   'John Doe',
-//   'Mike Chan',
-//   'Ashley Rodriguez',
-//   'Kevin Tupik',
-//   'Malia Brown',
-//   'Sarah Lourd',
-//   'Tom Allen',
-//   'Christian Eckenrode',
-//   'Justin Le',
-//   'None'
-// ];
-
 const employeeChoices = [];
-
-// const departmentChoices = ['Sales', 'Engineering', 'Finance', 'Legal'];
-
 const departmentChoices = [];
 
 const connection = mysql.createConnection({
@@ -67,13 +40,18 @@ const connection = mysql.createConnection({
 
 connection.connect(err => {
   if (err) throw err;
-  // prompt();
-  getDatabaseInfo('department', 'name');
-  // getDatabaseInfo('role', 'title');
-  // getDatabaseInfo('employee', 'full_name');
+  prompt();
 });
 
+// function init() {
+//   getDatabaseInfo('department', 'name');
+//   getDatabaseInfo('role', 'title');
+//   getDatabaseInfo('employee', 'full_name');
+// }
+
 function prompt() {
+  updateInfo(getDatabaseInfo);
+
   inquirer
     .prompt({
       name: 'action',
@@ -130,6 +108,7 @@ function prompt() {
 
 /*
 TODO first_name, last_name FROM employees WHERE manager_id = id -- MANAGER
+concat?
 */
 function viewEmployees() {
   const query = `
@@ -261,7 +240,6 @@ function addEmployee() {
         },
         (err, res) => {
           if (err) throw err;
-          // console.log(res);
           prompt();
         }
       );
@@ -320,6 +298,7 @@ function addRole() {
       }
     ])
     .then(answer => {
+      // MAP OUT ALL DEPARTMENTS TO IDS!!!!!
       switch (answer.roleDepartment) {
         case 'Sales':
           answer.roleDepartment = 1;
@@ -369,38 +348,17 @@ function updateEmployeeRole() {
       }
     ])
     .then(answer => {
-      switch (answer.roleUpdate) {
-        case 'Sales Lead':
-          answer.roleUpdate = 1;
-          break;
-        case 'Salesperson':
-          answer.roleUpdate = 2;
-          break;
-        case 'Lead Engineer':
-          answer.roleUpdate = 3;
-          break;
-        case 'Software Engineer':
-          answer.roleUpdate = 4;
-          break;
-        case 'Accountant':
-          answer.roleUpdate = 5;
-          break;
-        case 'Legal Team Lead':
-          answer.roleUpdate = 6;
-          break;
-        case 'Lawyer':
-          answer.roleUpdate = 7;
-          break;
-      }
+      let employeeId = employeeChoices.indexOf(answer.updateEmployee) + 1;
+      let newRole = roleChoices.indexOf(answer.roleUpdate) + 1;
 
       const query = connection.query(
         'UPDATE employee SET ? WHERE ?',
         [
           {
-            role_id: answer.roleUpdate
+            role_id: newRole
           },
           {
-            id: 9
+            id: employeeId
           }
         ],
         (err, res) => {
@@ -411,6 +369,7 @@ function updateEmployeeRole() {
     });
 }
 
+// fills the arrays with data from database
 function getDatabaseInfo(table, column) {
   let choiceArr;
 
@@ -462,4 +421,17 @@ function getDatabaseInfo(table, column) {
   }
 }
 
+// updates arrays with data from database
+function updateInfo(callback) {
+  callback('role', 'title');
+  callback('department', 'name');
+  callback('employee', 'full_name');
+}
+
 // TODO: validate all answers, extract prompts to different file
+
+/* 
+TODO: NOW THAT I HAVE DYNAMIC DATA FOR THE DATABASES, I NEED TO 
+TODO: REPLACE MY SWITCH STATEMENTS THAT CHANGE answers TO NUMBERS
+TODO: TO SOMEHOW REMAP ALL ANSWERS to NUMBERS! array.map()?
+*/
