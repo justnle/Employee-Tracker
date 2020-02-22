@@ -343,6 +343,63 @@ function addRole() {
     });
 }
 
-// function updateEmployeeRole() {
+function updateEmployeeRole() {
+  inquirer
+    .prompt([
+      {
+        name: 'updateEmployee',
+        type: 'list',
+        message: "Which employee's role would you like to update?",
+        choices: employeeChoices
+      },
+      {
+        name: 'roleUpdate',
+        type: 'rawlist',
+        message: "What is the employee's new role?",
+        choices: roleChoices
+      }
+    ])
+    .then(answer => {
+      switch (answer.roleUpdate) {
+        case 'Sales Lead':
+          answer.roleUpdate = 1;
+          break;
+        case 'Salesperson':
+          answer.roleUpdate = 2;
+          break;
+        case 'Lead Engineer':
+          answer.roleUpdate = 3;
+          break;
+        case 'Software Engineer':
+          answer.roleUpdate = 4;
+          break;
+        case 'Accountant':
+          answer.roleUpdate = 5;
+          break;
+        case 'Legal Team Lead':
+          answer.roleUpdate = 6;
+          break;
+        case 'Lawyer':
+          answer.roleUpdate = 7;
+          break;
+      }
 
-// }
+      const query = connection.query(
+        'UPDATE employee SET ? WHERE ?',
+        [
+          {
+            role_id: answer.roleUpdate
+          },
+          {
+            id: answer.updateEmployee
+          }
+        ],
+        (err, res) => {
+          if (err) throw err;
+          prompt();
+        }
+      );
+    });
+}
+
+// TODO: validate all answers, extract prompts to different file
