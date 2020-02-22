@@ -298,30 +298,14 @@ function addRole() {
       }
     ])
     .then(answer => {
-      // MAP OUT ALL DEPARTMENTS TO IDS!!!!!
-      switch (answer.roleDepartment) {
-        case 'Sales':
-          answer.roleDepartment = 1;
-          break;
-        case 'Engineering':
-          answer.roleDepartment = 2;
-          break;
-        case 'Finance':
-          answer.roleDepartment = 3;
-          break;
-        case 'Legal':
-          answer.roleDepartment = 4;
-          break;
-        default:
-          answer.roleDepartment = null;
-      }
+      let departmentId = departmentChoices.indexOf(answer.roleDepartment) + 1;
 
       const query = connection.query(
         'INSERT INTO role SET ?',
         {
           title: answer.roleName,
           salary: answer.salary,
-          department_id: answer.roleDepartment
+          department_id: departmentId
         },
         (err, res) => {
           if (err) throw err;
