@@ -256,9 +256,28 @@ function addEmployee() {
     });
 }
 
-// function addDepartment() {
-
-// }
+function addDepartment() {
+  inquirer
+    .prompt([
+      {
+        name: 'departmentName',
+        type: 'input',
+        message: 'What is the name of the department?'
+      }
+    ])
+    .then(answer => {
+      const query = connection.query(
+        'INSERT INTO department SET ?',
+        {
+          name: answer.departmentName
+        },
+        (err, res) => {
+          if (err) throw err;
+          prompt();
+        }
+      );
+    });
+}
 
 // function addRole() {
 
