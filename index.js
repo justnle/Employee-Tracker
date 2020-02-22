@@ -26,30 +26,36 @@ const promptMessagesBonus = {
   viewManagers: 'View All Managers'
 };
 
-// ALL HAVE TO DYNAMICALLY UPDATE or PULL FROM THE DB
-const roleChoices = [
-  'Sales Lead',
-  'Salesperson',
-  'Lead Engineer',
-  'Software Engineer',
-  'Accountant',
-  'Legal Team Lead',
-  'Lawyer'
-];
+// const roleChoices = [
+//   'Sales Lead',
+//   'Salesperson',
+//   'Lead Engineer',
+//   'Software Engineer',
+//   'Accountant',
+//   'Legal Team Lead',
+//   'Lawyer'
+// ];
 
-const employeeChoices = [
-  'John Doe',
-  'Mike Chan',
-  'Ashley Rodriguez',
-  'Kevin Tupik',
-  'Malia Brown',
-  'Sarah Lourd',
-  'Tom Allen',
-  'Christian Eckenrode',
-  'None'
-];
+const roleChoices = [];
 
-const departmentChoices = ['Sales', 'Engineering', 'Finance', 'Legal'];
+// const employeeChoices = [
+//   'John Doe',
+//   'Mike Chan',
+//   'Ashley Rodriguez',
+//   'Kevin Tupik',
+//   'Malia Brown',
+//   'Sarah Lourd',
+//   'Tom Allen',
+//   'Christian Eckenrode',
+//   'Justin Le',
+//   'None'
+// ];
+
+const employeeChoices = [];
+
+// const departmentChoices = ['Sales', 'Engineering', 'Finance', 'Legal'];
+
+const departmentChoices = [];
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -61,7 +67,10 @@ const connection = mysql.createConnection({
 
 connection.connect(err => {
   if (err) throw err;
-  prompt();
+  // prompt();
+  getDatabaseInfo('department', 'name');
+  // getDatabaseInfo('role', 'title');
+  // getDatabaseInfo('employee', 'full_name');
 });
 
 function prompt() {
@@ -391,7 +400,7 @@ function updateEmployeeRole() {
             role_id: answer.roleUpdate
           },
           {
-            id: answer.updateEmployee
+            id: 9
           }
         ],
         (err, res) => {
@@ -400,6 +409,57 @@ function updateEmployeeRole() {
         }
       );
     });
+}
+
+function getDatabaseInfo(table, column) {
+  let choiceArr;
+
+  switch (table) {
+    case 'department':
+      departmentChoices.length = 0;
+      choiceArr = departmentChoices;
+      break;
+    case 'role':
+      roleChoices.length = 0;
+      choiceArr = roleChoices;
+      break;
+    case 'employee':
+      employeeChoices.length = 0;
+      choiceArr = employeeChoices;
+      break;
+  }
+
+  if (table === 'department' || table === 'role') {
+    const query = connection.query(
+      `SELECT ${column} FROM ${table}`,
+      (err, res) => {
+        if (err) throw err;
+
+        switch (column) {
+          case 'name':
+            for (const department of res) {
+              choiceArr.push(department.name);
+            }
+            break;
+          case 'title':
+            for (const role of res) {
+              choiceArr.push(role.title);
+            }
+            break;
+        }
+      }
+    );
+  } else {
+    const query = connection.query(
+      `SELECT concat(first_name, ' ', last_name) AS full_name FROM employee`,
+      (err, res) => {
+        if (err) throw err;
+        for (const employees of res) {
+          choiceArr.push(employees.full_name);
+        }
+      }
+    );
+  }
 }
 
 // TODO: validate all answers, extract prompts to different file
