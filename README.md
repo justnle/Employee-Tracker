@@ -19,10 +19,12 @@ npm start
 The user will use arrow keys to navigate the menu, and the application will receive the user's input to the prompts to manage the employee database.
 
 ### Screenshots
-![start]()
+![start](https://github.com/twopcz/Employee-Tracker/blob/dev/assets/images/start.png?raw=true)
+![employees-view](https://github.com/twopcz/Employee-Tracker/blob/dev/assets/images/employees.png?raw=true)
 
 ### Demo
-![demo-gif]()
+![demo-gif](https://github.com/twopcz/Employee-Tracker/blob/dev/assets/images/employee-tracker.gif?raw=true)
+![Video](https://github.com/twopcz/Employee-Tracker/blob/dev/assets/images/employee-tracker.mp4)
 
 # Technologies
 
