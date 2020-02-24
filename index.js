@@ -102,19 +102,19 @@ function prompt() {
     });
 }
 
-/*
-TODO first_name, last_name FROM employees WHERE manager_id = id -- MANAGER concat?
-*/
 function viewEmployees() {
   const query = `
-    SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, employee.manager_id
+    SELECT employee.id AS ID, employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary AS 'Salary', concat(E.first_name, ' ', E.last_name) AS 'Manager Name'
     FROM employee 
-        INNER JOIN role 
-            ON (employee.role_id = role.id)
-        INNER JOIN department
-            ON (role.department_id = department.id)
-    ORDER BY employee.id
+      INNER JOIN role 
+          ON (employee.role_id = role.id)
+      INNER JOIN department
+          ON (role.department_id = department.id)
+      LEFT JOIN employee E
+          ON (employee.manager_id = E.id)
+    ORDER BY employee.id;
     `;
+
   connection.query(query, (err, res) => {
     if (err) throw err;
     const employeeTable = cTable.getTable(res);
@@ -301,7 +301,6 @@ function updateEmployeeRole() {
     });
 }
 
-// fills the arrays with data from database
 function getDatabaseInfo(table, column) {
   let choiceArr;
 
@@ -368,7 +367,6 @@ function getDatabaseInfo(table, column) {
   }
 }
 
-// updates arrays with data from database
 function updateInfo(callback) {
   callback('role', 'title');
   callback('department', 'name');
