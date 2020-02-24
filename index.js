@@ -29,6 +29,7 @@ const promptMessagesBonus = {
 const roleChoices = [];
 const employeeChoices = [];
 const departmentChoices = [];
+const employeeIds = [];
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -42,12 +43,6 @@ connection.connect(err => {
   if (err) throw err;
   prompt();
 });
-
-// function init() {
-//   getDatabaseInfo('department', 'name');
-//   getDatabaseInfo('role', 'title');
-//   getDatabaseInfo('employee', 'full_name');
-// }
 
 function prompt() {
   updateInfo(getDatabaseInfo);
@@ -69,7 +64,6 @@ function prompt() {
       ]
     })
     .then(answer => {
-      //   console.log('answer', answer);
       switch (answer.action) {
         case promptMessages.viewEmployees:
           viewEmployees();
@@ -107,8 +101,7 @@ function prompt() {
 }
 
 /*
-TODO first_name, last_name FROM employees WHERE manager_id = id -- MANAGER
-concat?
+TODO first_name, last_name FROM employees WHERE manager_id = id -- MANAGER concat?
 */
 function viewEmployees() {
   const query = `
@@ -149,8 +142,9 @@ function viewRoles() {
   });
 }
 
-// DRY OUT
 function addEmployee() {
+  employeeChoices.push('NULL');
+
   inquirer
     .prompt([
       {
@@ -177,66 +171,17 @@ function addEmployee() {
       }
     ])
     .then(answer => {
-      switch (answer.role) {
-        case 'Sales Lead':
-          answer.role = 1;
-          break;
-        case 'Salesperson':
-          answer.role = 2;
-          break;
-        case 'Lead Engineer':
-          answer.role = 3;
-          break;
-        case 'Software Engineer':
-          answer.role = 4;
-          break;
-        case 'Accountant':
-          answer.role = 5;
-          break;
-        case 'Legal Team Lead':
-          answer.role = 6;
-          break;
-        case 'Lawyer':
-          answer.role = 7;
-          break;
-      }
-
-      switch (answer.manager) {
-        case 'John Doe':
-          answer.manager = 1;
-          break;
-        case 'Mike Chan':
-          answer.manager = 2;
-          break;
-        case 'Ashley Rodriguez':
-          answer.manager = 3;
-          break;
-        case 'Kevin Tupik':
-          answer.manager = 4;
-          break;
-        case 'Malia Brown':
-          answer.manager = 5;
-          break;
-        case 'Sarah Lourd':
-          answer.manager = 6;
-          break;
-        case 'Tom Allen':
-          answer.manager = 7;
-          break;
-        case 'Christian Eckenrode':
-          answer.manager = 8;
-          break;
-        default:
-          answer.manager = null;
-      }
+      let roleId = roleChoices.indexOf(answer.role) + 1;
+      let managerIdIndex = employeeChoices.indexOf(answer.manager);
+      let managerId = employeeIds[managerIdIndex];
 
       const query = connection.query(
         'INSERT INTO employee SET ?',
         {
           first_name: answer.firstName,
           last_name: answer.lastName,
-          role_id: answer.role,
-          manager_id: answer.manager
+          role_id: roleId,
+          manager_id: managerId
         },
         (err, res) => {
           if (err) throw err;
@@ -359,20 +304,29 @@ function getDatabaseInfo(table, column) {
 
   switch (table) {
     case 'department':
-      departmentChoices.length = 0;
       choiceArr = departmentChoices;
       break;
     case 'role':
-      roleChoices.length = 0;
       choiceArr = roleChoices;
       break;
     case 'employee':
-      employeeChoices.length = 0;
       choiceArr = employeeChoices;
       break;
   }
 
-  if (table === 'department' || table === 'role') {
+  if (table === 'employee' && column === 'full_name') {
+    employeeChoices.length = 0;
+
+    const query = connection.query(
+      `SELECT concat(first_name, ' ', last_name) AS full_name FROM employee`,
+      (err, res) => {
+        if (err) throw err;
+        for (const employees of res) {
+          choiceArr.push(employees.full_name);
+        }
+      }
+    );
+  } else {
     const query = connection.query(
       `SELECT ${column} FROM ${table}`,
       (err, res) => {
@@ -380,25 +334,27 @@ function getDatabaseInfo(table, column) {
 
         switch (column) {
           case 'name':
+            departmentChoices.length = 0;
+
             for (const department of res) {
               choiceArr.push(department.name);
             }
             break;
           case 'title':
+            roleChoices.length = 0;
+
             for (const role of res) {
               choiceArr.push(role.title);
             }
             break;
-        }
-      }
-    );
-  } else {
-    const query = connection.query(
-      `SELECT concat(first_name, ' ', last_name) AS full_name FROM employee`,
-      (err, res) => {
-        if (err) throw err;
-        for (const employees of res) {
-          choiceArr.push(employees.full_name);
+          case 'id':
+            employeeIds.length = 0;
+
+            for (const ids of res) {
+              employeeIds.push(ids.id);
+            }
+            employeeIds.sort((a, b) => a - b);
+            break;
         }
       }
     );
@@ -410,6 +366,7 @@ function updateInfo(callback) {
   callback('role', 'title');
   callback('department', 'name');
   callback('employee', 'full_name');
+  callback('employee', 'id');
 }
 
 // TODO: validate all answers, extract prompts to different file
