@@ -187,6 +187,7 @@ function addEmployee() {
         },
         (err, res) => {
           if (err) throw err;
+          console.log('New employee was added!');
           prompt();
         }
       );
@@ -210,6 +211,7 @@ function addDepartment() {
         },
         (err, res) => {
           if (err) throw err;
+          console.log('New department was added!');
           prompt();
         }
       );
@@ -256,6 +258,7 @@ function addRole() {
         },
         (err, res) => {
           if (err) throw err;
+          console.log('New role was added!');
           prompt();
         }
       );
@@ -295,6 +298,7 @@ function updateEmployeeRole() {
         ],
         (err, res) => {
           if (err) throw err;
+          console.log('Successfully updated employee!');
           prompt();
         }
       );
