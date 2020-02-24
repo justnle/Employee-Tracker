@@ -1,2 +1,55 @@
 # Employee-Tracker
-MySQL Employee Tracker with Node.js
+A Node.js application that accesses a SQL database composed of employee information from a company. Using the command line, the user can view, add, and update employee information, or view/add new employees/roles to the company.
+
+## Usage
+To install and use locally, 
+1. ```git clone``` this repository to a local directory
+2. Run the ```schema.sql``` file in MySQLWorkbench, or from the terminal to initialize and begin using the database
+3. Optionally, run the ```seed.sql``` file to seed the database with some information
+4. Install the dependencies via the terminal by running:
+```bash
+npm i
+```
+5. Then run the application with:
+
+```bash
+npm start
+```
+
+The user will use arrow keys to navigate the menu, and the application will receive the user's input to the prompts to manage the employee database.
+
+### Screenshots
+![start]()
+
+### Demo
+![demo-gif]()
+
+# Technologies
+
+This application was built with:
+
+* JavaScript
+* [MySQL](https://dev.mysql.com/doc/)
+* [Node](https://nodejs.org/en/)
+
+The dependencies required:
+
+```
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.0.4",
+    "mysql": "^2.18.1"
+  }
+  ```
+
+Documentation on dependencies:
+
+* [console.table](https://www.npmjs.com/package/console.table)
+* [Inquirer](https://www.npmjs.com/package/inquirer)
+* [mysql](https://www.npmjs.com/package/mysql)
+
+# Enhancements
+N/A
+
+# License
+This project is licensed under the MIT License - see the LICENSE.md file for details
