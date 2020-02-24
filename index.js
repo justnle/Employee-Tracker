@@ -70,11 +70,11 @@ function prompt() {
           break;
 
         case promptMessages.viewDepartments:
-          viewDepartments();
+          view('departments');
           break;
 
         case promptMessages.viewRoles:
-          viewRoles();
+          view('roles');
           break;
 
         case promptMessages.addEmployee:
@@ -123,24 +123,31 @@ function viewEmployees() {
   });
 }
 
-function viewDepartments() {
-  const query = 'SELECT name AS Departments FROM department';
-  connection.query(query, (err, res) => {
-    if (err) throw err;
-    const departmentTable = cTable.getTable(res);
-    console.log('\n' + departmentTable);
-    prompt();
-  });
-}
-
-function viewRoles() {
-  const query = 'SELECT title AS Roles FROM role';
-  connection.query(query, (err, res) => {
-    if (err) throw err;
-    const roleTable = cTable.getTable(res);
-    console.log('\n' + roleTable);
-    prompt();
-  });
+function view(choice) {
+  switch (choice) {
+    case 'departments':
+      const departmentQuery = 'SELECT name AS Departments FROM department';
+      connection.query(departmentQuery, (err, res) => {
+        if (err) throw err;
+        const departmentTable = cTable.getTable(res);
+        console.log('\n' + departmentTable);
+        prompt();
+      });
+      break;
+    case 'roles':
+      const roleQuery = 'SELECT title AS Roles FROM role';
+      connection.query(roleQuery, (err, res) => {
+        if (err) throw err;
+        const roleTable = cTable.getTable(res);
+        console.log('\n' + roleTable);
+        prompt();
+      });
+      break;
+    case 'employees':
+      break;
+    default:
+      throw new Error('Unexpected choice, resulting in an error.');
+  }
 }
 
 function addEmployee() {
