@@ -277,8 +277,15 @@ function updateEmployeeRole() {
       }
     ])
     .then(answer => {
-      let employeeId = employeeChoices.indexOf(answer.updateEmployee) + 1;
+      let employeeIdIndex = employeeChoices.indexOf(answer.updateEmployee);
+      let employeeId = employeeIds[employeeIdIndex];
       let newRole = roleChoices.indexOf(answer.roleUpdate) + 1;
+
+      console.log(employeeIdIndex);
+      console.log(employeeId);
+      // console.log(roleChoices);
+      // console.log(answer.roleUpdate);
+      console.log(newRole);
 
       const query = connection.query(
         'UPDATE employee SET ? WHERE ?',
