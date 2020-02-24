@@ -104,7 +104,7 @@ function prompt() {
 
 function viewEmployees() {
   const query = `
-    SELECT employee.id AS ID, employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary AS 'Salary', concat(E.first_name, ' ', E.last_name) AS 'Manager Name'
+    SELECT employee.id AS 'Employee ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary AS 'Salary', concat(E.first_name, ' ', E.last_name) AS 'Manager Name'
     FROM employee 
       INNER JOIN role 
           ON (employee.role_id = role.id)
@@ -125,7 +125,7 @@ function viewEmployees() {
 
 // TODO: DRY OUT, view() are all similar, just SELECT from different tables
 function viewDepartments() {
-  const query = 'SELECT name FROM department';
+  const query = 'SELECT name AS Departments FROM department';
   connection.query(query, (err, res) => {
     if (err) throw err;
     const departmentTable = cTable.getTable(res);
@@ -135,7 +135,7 @@ function viewDepartments() {
 }
 
 function viewRoles() {
-  const query = 'SELECT title FROM role';
+  const query = 'SELECT title AS Roles FROM role';
   connection.query(query, (err, res) => {
     if (err) throw err;
     const roleTable = cTable.getTable(res);
@@ -187,7 +187,7 @@ function addEmployee() {
         },
         (err, res) => {
           if (err) throw err;
-          console.log('New employee was added!');
+          console.log('-- New employee was added! --');
           prompt();
         }
       );
@@ -211,7 +211,7 @@ function addDepartment() {
         },
         (err, res) => {
           if (err) throw err;
-          console.log('New department was added!');
+          console.log('-- New department was added! --');
           prompt();
         }
       );
@@ -258,7 +258,7 @@ function addRole() {
         },
         (err, res) => {
           if (err) throw err;
-          console.log('New role was added!');
+          console.log('-- New role was added! --');
           prompt();
         }
       );
@@ -298,7 +298,7 @@ function updateEmployeeRole() {
         ],
         (err, res) => {
           if (err) throw err;
-          console.log('Successfully updated employee!');
+          console.log('-- Successfully updated employee! --');
           prompt();
         }
       );
