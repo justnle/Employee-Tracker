@@ -16,4 +16,4 @@ connection.connect(err => {
   appFunctions.prompt();
 });
 
-// module.exports = connection;
+exports.connection = connection;
