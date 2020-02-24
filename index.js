@@ -1,35 +1,11 @@
 'use strict';
 
-const inquirer = require('inquirer');
 const mysql = require('mysql');
+// const functions = require('./lib/functions');
+const inquirer = require('inquirer');
 const cTable = require('console.table');
-
-const promptMessages = {
-  viewEmployees: 'View All Employees',
-  addEmployee: 'Add Employee',
-  viewDepartments: 'View All Departments',
-  addDepartment: 'Add Department',
-  viewRoles: 'View All Roles',
-  addRole: 'Add Role',
-  updateEmployeeRole: 'Update Employee Role',
-  exit: 'Exit'
-};
-
-const promptMessagesBonus = {
-  viewEmployeesByDepartment: 'View All Employees By Department',
-  updateEmployeeManager: 'Update Employee Manager',
-  viewEmployeesByManager: 'View All Employees By Manager',
-  removeEmployee: 'Remove Employee',
-  removeDepartment: 'Remove Department',
-  removeRole: 'Remove Role',
-  viewDepartmentBudget: 'View Department Budget Utilized',
-  viewManagers: 'View All Managers'
-};
-
-const roleChoices = [];
-const employeeChoices = [];
-const departmentChoices = [];
-const employeeIds = [];
+const prompts = require('./lib/prompts');
+const queries = require('./lib/queries');
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -39,10 +15,34 @@ const connection = mysql.createConnection({
   database: 'employees_db'
 });
 
+const messages = {
+  viewEmployees: 'View All Employees',
+  addEmployee: 'Add Employee',
+  viewDepartments: 'View All Departments',
+  addDepartment: 'Add Department',
+  viewRoles: 'View All Roles',
+  addRole: 'Add Role',
+  updateEmployeeRole: 'Update Employee Role',
+  viewEmployeesByDepartment: 'View All Employees By Department',
+  updateEmployeeManager: 'Update Employee Manager',
+  viewEmployeesByManager: 'View All Employees By Manager',
+  removeEmployee: 'Remove Employee',
+  removeDepartment: 'Remove Department',
+  removeRole: 'Remove Role',
+  viewDepartmentBudget: 'View Department Budget Utilized',
+  viewManagers: 'View All Managers',
+  exit: 'Exit'
+};
+
 connection.connect(err => {
   if (err) throw err;
   prompt();
 });
+
+const roleChoices = [];
+const employeeChoices = [];
+const departmentChoices = [];
+const employeeIds = [];
 
 function prompt() {
   updateInfo(getDatabaseInfo);
@@ -53,47 +53,47 @@ function prompt() {
       type: 'list',
       message: 'What would you like to do?',
       choices: [
-        promptMessages.viewEmployees,
-        promptMessages.viewDepartments,
-        promptMessages.viewRoles,
-        promptMessages.addEmployee,
-        promptMessages.addDepartment,
-        promptMessages.addRole,
-        promptMessages.updateEmployeeRole,
-        promptMessages.exit
+        messages.viewEmployees,
+        messages.viewDepartments,
+        messages.viewRoles,
+        messages.addEmployee,
+        messages.addDepartment,
+        messages.addRole,
+        messages.updateEmployeeRole,
+        messages.exit
       ]
     })
     .then(answer => {
       switch (answer.action) {
-        case promptMessages.viewEmployees:
+        case messages.viewEmployees:
           viewEmployees();
           break;
 
-        case promptMessages.viewDepartments:
+        case messages.viewDepartments:
           view('departments');
           break;
 
-        case promptMessages.viewRoles:
+        case messages.viewRoles:
           view('roles');
           break;
 
-        case promptMessages.addEmployee:
+        case messages.addEmployee:
           addEmployee();
           break;
 
-        case promptMessages.addDepartment:
+        case messages.addDepartment:
           addDepartment();
           break;
 
-        case promptMessages.addRole:
+        case messages.addRole:
           addRole();
           break;
 
-        case promptMessages.updateEmployeeRole:
+        case messages.updateEmployeeRole:
           updateEmployeeRole();
           break;
 
-        case promptMessages.exit:
+        case messages.exit:
           connection.end();
           break;
         default:
@@ -103,19 +103,7 @@ function prompt() {
 }
 
 function viewEmployees() {
-  const query = `
-    SELECT employee.id AS 'Employee ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary AS 'Salary', concat(E.first_name, ' ', E.last_name) AS 'Manager Name'
-    FROM employee 
-      INNER JOIN role 
-          ON (employee.role_id = role.id)
-      INNER JOIN department
-          ON (role.department_id = department.id)
-      LEFT JOIN employee E
-          ON (employee.manager_id = E.id)
-    ORDER BY employee.id;
-    `;
-
-  connection.query(query, (err, res) => {
+  connection.query(queries.allEmployees, (err, res) => {
     if (err) throw err;
     const employeeTable = cTable.getTable(res);
     console.log('\n' + employeeTable);
@@ -126,8 +114,7 @@ function viewEmployees() {
 function view(choice) {
   switch (choice) {
     case 'departments':
-      const departmentQuery = 'SELECT name AS Departments FROM department';
-      connection.query(departmentQuery, (err, res) => {
+      connection.query(queries.allDepartments, (err, res) => {
         if (err) throw err;
         const departmentTable = cTable.getTable(res);
         console.log('\n' + departmentTable);
@@ -135,8 +122,7 @@ function view(choice) {
       });
       break;
     case 'roles':
-      const roleQuery = 'SELECT title AS Roles FROM role';
-      connection.query(roleQuery, (err, res) => {
+      connection.query(queries.allRoles, (err, res) => {
         if (err) throw err;
         const roleTable = cTable.getTable(res);
         console.log('\n' + roleTable);
@@ -144,6 +130,7 @@ function view(choice) {
       });
       break;
     case 'employees':
+      // place holder
       break;
     default:
       throw new Error('Unexpected choice, resulting in an error.');
@@ -183,8 +170,8 @@ function addEmployee() {
       let managerIdIndex = employeeChoices.indexOf(answer.manager);
       let managerId = employeeIds[managerIdIndex];
 
-      const query = connection.query(
-        'INSERT INTO employee SET ?',
+      connection.query(
+        queries.addEmployee,
         {
           first_name: answer.firstName,
           last_name: answer.lastName,
@@ -210,8 +197,8 @@ function addDepartment() {
       }
     ])
     .then(answer => {
-      const query = connection.query(
-        'INSERT INTO department SET ?',
+      connection.query(
+        queries.addDepartment,
         {
           name: answer.departmentName
         },
@@ -255,8 +242,8 @@ function addRole() {
     .then(answer => {
       let departmentId = departmentChoices.indexOf(answer.roleDepartment) + 1;
 
-      const query = connection.query(
-        'INSERT INTO role SET ?',
+      connection.query(
+        queries.addRole,
         {
           title: answer.roleName,
           salary: answer.salary,
@@ -292,8 +279,8 @@ function updateEmployeeRole() {
       let employeeId = employeeIds[employeeIdIndex];
       let newRole = roleChoices.indexOf(answer.roleUpdate) + 1;
 
-      const query = connection.query(
-        'UPDATE employee SET ? WHERE ?',
+      connection.query(
+        queries.updateEmployeeRole,
         [
           {
             role_id: newRole
@@ -331,49 +318,43 @@ function getDatabaseInfo(table, column) {
   if (table === 'employee' && column === 'full_name') {
     employeeChoices.length = 0;
 
-    const query = connection.query(
-      `SELECT concat(first_name, ' ', last_name) AS full_name FROM employee`,
-      (err, res) => {
-        if (err) throw err;
-        for (const employees of res) {
-          choiceArr.push(employees.full_name);
-        }
+    connection.query(queries.employeesFullName, (err, res) => {
+      if (err) throw err;
+      for (const employees of res) {
+        choiceArr.push(employees.full_name);
       }
-    );
+    });
   } else {
-    const query = connection.query(
-      `SELECT ${column} FROM ${table}`,
-      (err, res) => {
-        if (err) throw err;
+    connection.query(`SELECT ${column} FROM ${table}`, (err, res) => {
+      if (err) throw err;
 
-        switch (column) {
-          case 'name':
-            departmentChoices.length = 0;
+      switch (column) {
+        case 'name':
+          departmentChoices.length = 0;
 
-            for (const department of res) {
-              choiceArr.push(department.name);
-            }
-            break;
-          case 'title':
-            roleChoices.length = 0;
+          for (const department of res) {
+            choiceArr.push(department.name);
+          }
+          break;
+        case 'title':
+          roleChoices.length = 0;
 
-            for (const role of res) {
-              choiceArr.push(role.title);
-            }
-            break;
-          case 'id':
-            employeeIds.length = 0;
+          for (const role of res) {
+            choiceArr.push(role.title);
+          }
+          break;
+        case 'id':
+          employeeIds.length = 0;
 
-            for (const ids of res) {
-              employeeIds.push(ids.id);
-            }
-            employeeIds.sort((a, b) => a - b);
-            break;
-          default:
-            throw new Error('Unknown column, unexpected case.');
-        }
+          for (const ids of res) {
+            employeeIds.push(ids.id);
+          }
+          employeeIds.sort((a, b) => a - b);
+          break;
+        default:
+          throw new Error('Unknown column, unexpected case.');
       }
-    );
+    });
   }
 }
 
@@ -383,5 +364,3 @@ function updateInfo(callback) {
   callback('employee', 'full_name');
   callback('employee', 'id');
 }
-
-// TODO: validate all answers, extract prompts to different file
