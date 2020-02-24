@@ -15,17 +15,6 @@ const promptMessages = {
   exit: 'Exit'
 };
 
-const promptMessagesBonus = {
-  viewEmployeesByDepartment: 'View All Employees By Department',
-  updateEmployeeManager: 'Update Employee Manager',
-  viewEmployeesByManager: 'View All Employees By Manager',
-  removeEmployee: 'Remove Employee',
-  removeDepartment: 'Remove Department',
-  removeRole: 'Remove Role',
-  viewDepartmentBudget: 'View Department Budget Utilized',
-  viewManagers: 'View All Managers'
-};
-
 const roleChoices = [];
 const employeeChoices = [];
 const departmentChoices = [];
