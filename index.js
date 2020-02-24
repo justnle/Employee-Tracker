@@ -15,25 +15,6 @@ const connection = mysql.createConnection({
   database: 'employees_db'
 });
 
-const messages = {
-  viewEmployees: 'View All Employees',
-  addEmployee: 'Add Employee',
-  viewDepartments: 'View All Departments',
-  addDepartment: 'Add Department',
-  viewRoles: 'View All Roles',
-  addRole: 'Add Role',
-  updateEmployeeRole: 'Update Employee Role',
-  viewEmployeesByDepartment: 'View All Employees By Department',
-  updateEmployeeManager: 'Update Employee Manager',
-  viewEmployeesByManager: 'View All Employees By Manager',
-  removeEmployee: 'Remove Employee',
-  removeDepartment: 'Remove Department',
-  removeRole: 'Remove Role',
-  viewDepartmentBudget: 'View Department Budget Utilized',
-  viewManagers: 'View All Managers',
-  exit: 'Exit'
-};
-
 connection.connect(err => {
   if (err) throw err;
   prompt();
@@ -53,47 +34,47 @@ function prompt() {
       type: 'list',
       message: 'What would you like to do?',
       choices: [
-        messages.viewEmployees,
-        messages.viewDepartments,
-        messages.viewRoles,
-        messages.addEmployee,
-        messages.addDepartment,
-        messages.addRole,
-        messages.updateEmployeeRole,
-        messages.exit
+        prompts.viewEmployees,
+        prompts.viewDepartments,
+        prompts.viewRoles,
+        prompts.addEmployee,
+        prompts.addDepartment,
+        prompts.addRole,
+        prompts.updateEmployeeRole,
+        prompts.exit
       ]
     })
     .then(answer => {
       switch (answer.action) {
-        case messages.viewEmployees:
+        case prompts.viewEmployees:
           viewEmployees();
           break;
 
-        case messages.viewDepartments:
+        case prompts.viewDepartments:
           view('departments');
           break;
 
-        case messages.viewRoles:
+        case prompts.viewRoles:
           view('roles');
           break;
 
-        case messages.addEmployee:
+        case prompts.addEmployee:
           addEmployee();
           break;
 
-        case messages.addDepartment:
+        case prompts.addDepartment:
           addDepartment();
           break;
 
-        case messages.addRole:
+        case prompts.addRole:
           addRole();
           break;
 
-        case messages.updateEmployeeRole:
+        case prompts.updateEmployeeRole:
           updateEmployeeRole();
           break;
 
-        case messages.exit:
+        case prompts.exit:
           connection.end();
           break;
         default:
