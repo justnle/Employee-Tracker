@@ -96,6 +96,8 @@ function prompt() {
         case promptMessages.exit:
           connection.end();
           break;
+        default:
+          throw new Error('Unexpected prompt error.');
       }
     });
 }
@@ -313,6 +315,8 @@ function getDatabaseInfo(table, column) {
     case 'employee':
       choiceArr = employeeChoices;
       break;
+    default:
+      throw new Error('Unknown table, unexpected case.');
   }
 
   if (table === 'employee' && column === 'full_name') {
@@ -356,6 +360,8 @@ function getDatabaseInfo(table, column) {
             }
             employeeIds.sort((a, b) => a - b);
             break;
+          default:
+            throw new Error('Unknown column, unexpected case.');
         }
       }
     );
@@ -371,9 +377,3 @@ function updateInfo(callback) {
 }
 
 // TODO: validate all answers, extract prompts to different file
-
-/* 
-TODO: NOW THAT I HAVE DYNAMIC DATA FOR THE DATABASES, I NEED TO 
-TODO: REPLACE MY SWITCH STATEMENTS THAT CHANGE answers TO NUMBERS
-TODO: TO SOMEHOW REMAP ALL ANSWERS to NUMBERS! array.map()?
-*/
