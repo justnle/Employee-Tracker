@@ -2,6 +2,7 @@
 
 const mysql = require('mysql');
 const appFunctions = require('./lib/appFunctions');
+const prompts = require('./lib/prompts');
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -13,6 +14,7 @@ const connection = mysql.createConnection({
 
 connection.connect(err => {
   if (err) throw err;
+  prompts.initPrompts();
   appFunctions.prompt();
 });
 
