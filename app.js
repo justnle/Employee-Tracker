@@ -1,7 +1,8 @@
 'use strict';
 
 const mysql = require('mysql');
-const appFunctions = require('./lib/appFunctions');
+const { initApp } = require('./lib/appFunctions');
+const { initPrompts } = require('./lib/prompts');
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -13,7 +14,8 @@ const connection = mysql.createConnection({
 
 connection.connect(err => {
   if (err) throw err;
-  appFunctions.prompt();
+  initPrompts();
+  initApp();
 });
 
 exports.connection = connection;
