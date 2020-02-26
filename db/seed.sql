@@ -23,13 +23,13 @@ INSERT INTO
     employee
     (first_name, last_name, role_id, manager_id)
 VALUES
-    ("John", "Doe", 1, 3),
-    ("Mike", "Chan", 2, 1),
-    ("Ashley", "Rodriguez", 3, NULL),
-    ("Kevin", "Tupik", 4, 3),
-    ("Malia", "Brown", 5, NULL),
-    ("Sarah", "Lourd", 6, NULL),
-    ("Tom", "Allen", 7, 7),
-    ("Christian", "Eckenrode", 3, 2);
+    ("Sean", "Carter", 1, 3),
+    ("Kanye", "West", 2, 1),
+    ("Aubrey", "Graham", 3, NULL),
+    ("Rakim", "Mayers", 4, 3),
+    ("Jermaine", "Cole", 5, NULL),
+    ("Scott", "Mescudi", 6, NULL),
+    ("Quavious", "Marshall", 7, 7),
+    ("Ermias", "Asghedom", 3, 2);
 
 ALTER TABLE employee ADD FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL;
