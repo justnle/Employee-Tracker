@@ -15,7 +15,7 @@ const connection = mysql.createConnection({
 connection.connect(err => {
   if (err) throw err;
   prompts.initPrompts();
-  appFunctions.prompt();
+  appFunctions.init();
 });
 
 exports.connection = connection;
