@@ -1,5 +1,6 @@
 INSERT INTO
-    department(name)
+    department
+    (name)
 VALUES
     ("Sales"),
     ("Engineering"),
@@ -7,7 +8,8 @@ VALUES
     ("Legal");
 
 INSERT INTO
-    role(title, salary, department_id)
+    role
+    (title, salary, department_id)
 VALUES
     ("Sales Lead", 100000, 1),
     ("Salesperson", 80000, 1),
@@ -18,7 +20,8 @@ VALUES
     ("Lawyer", 190000, 4);
 
 INSERT INTO
-    employee(first_name, last_name, role_id, manager_id)
+    employee
+    (first_name, last_name, role_id, manager_id)
 VALUES
     ("John", "Doe", 1, 3),
     ("Mike", "Chan", 2, 1),
@@ -29,4 +32,4 @@ VALUES
     ("Tom", "Allen", 7, 7),
     ("Christian", "Eckenrode", 3, 2);
 
-ALTER TABLE employee ADD FOREIGN KEY (manager_id) REFERENCES employee(id);
+ALTER TABLE employee ADD FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL;
