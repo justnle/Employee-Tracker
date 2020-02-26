@@ -51,7 +51,7 @@ Documentation on dependencies:
 * [mysql](https://www.npmjs.com/package/mysql)
 
 # Enhancements
-N/A
+Better regex expressions to validate some of the answers would be nice, making the code A LOT cleaner would be ideal. Add some ASCII art since everybody else has it!
 
 # License
 This project is licensed under the MIT License - see the LICENSE.md file for details
